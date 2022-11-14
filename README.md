@@ -7,4 +7,6 @@ In this app users can add trips and attendees, add overall expenses shared among
         ii. Core project for business logic
         iii. Infrastructure project for handling data
     2. Created Trip entity, repository and controller 
-    
+    3. Created frontend with ReactJs Typescript, Bootstrap, Axios
+    4. Agent file to correspond with backend API
+    5. Created Expenses, trip attendee, Identity entities, with appUser and trips many to many relation

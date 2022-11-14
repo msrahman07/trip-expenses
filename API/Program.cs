@@ -14,6 +14,17 @@ builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddDbContext<DataContext>(config => {
     config.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddCors(options => 
+{
+    options.AddPolicy(name: "AllowClient",
+        policy =>
+        {
+            policy.AllowAnyHeader()
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .WithOrigins("http://localhost:3000");
+        });
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -21,7 +32,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<DataContext>();
     await context.Database.MigrateAsync();
-    await SeedData.Initialize(services);
+    // await SeedData.Initialize(services);
 }
 
 // Configure the HTTP request pipeline.
@@ -32,7 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowClient");
 app.UseAuthorization();
 
 app.MapControllers();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Entities.Identity;
 
 namespace Core.Entities
 {
@@ -10,5 +11,7 @@ namespace Core.Entities
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal TotalExpense { get; set; } = 0.0M;
+        public List<TripAttendee> Attendees { get; set; } = new List<TripAttendee>();
+        public List<Expense> Expenses { get; set; } = new List<Expense>();
     }
 }
