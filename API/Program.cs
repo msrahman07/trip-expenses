@@ -1,5 +1,7 @@
+using API.Extensions;
 using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(
+    
+);
 builder.Services.AddScoped<ITripRepository, TripRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddDbContext<DataContext>(config => {
     config.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -25,6 +31,8 @@ builder.Services.AddCors(options =>
                 .WithOrigins("http://localhost:3000");
         });
 });
+builder.Services.AddIdentityServices(builder.Configuration);
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -44,6 +52,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowClient");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
