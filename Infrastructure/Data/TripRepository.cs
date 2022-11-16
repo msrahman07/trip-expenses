@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Core.DTOs;
 using Core.Entities;
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,19 +13,32 @@ namespace Infrastructure.Data
     public class TripRepository : ITripRepository
     {
         private readonly DataContext context;
+        private readonly IMapper mapper;
 
-        public TripRepository(DataContext context)
+        public TripRepository(DataContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
-        public async Task<Trip> CreateTrip(string name, string description, decimal totalExpense = 0)
+        public async Task<Trip> CreateTrip(string email, string name, string description, 
+            decimal totalExpense = 0)
         {
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if(user == null) return null!;
+            
             var trip = new Trip {
                 Name = name,
                 Description = description,
                 TotalExpense = totalExpense
             };
+            var attendee = new TripAttendee
+            {
+                AppUser = user,
+                Trip = trip
+            };
+            trip.Attendees.Add(attendee);
+
             await context.Trips.AddAsync(trip);
             var result = await context.SaveChangesAsync();
             if(result <= 0) return null!;
@@ -39,14 +54,22 @@ namespace Infrastructure.Data
             return;
         }
 
-        public async Task<IReadOnlyList<Trip>> GetAllTrips()
+        public async Task<IReadOnlyList<TripDto>> GetAllTrips()
         {
-            return await context.Trips.ToListAsync() ?? null!;
+            var trips = await context.Trips
+                .Include(t => t.Attendees)
+                .ThenInclude(u => u.AppUser)
+                .ToListAsync();
+            return mapper.Map<IReadOnlyList<Trip>, IReadOnlyList<TripDto>>(trips) ?? null!;
         }
 
-        public async Task<Trip> GetTripById(int id)
+        public async Task<TripDto> GetTripById(int id)
         {
-            return await context.Trips.FindAsync(id) ?? null!;
+            var trip = await context.Trips
+                .Include(t => t.Attendees)
+                .ThenInclude(u => u.AppUser)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            return  mapper.Map<Trip, TripDto>(trip!) ?? null!;
         }
     }
 }

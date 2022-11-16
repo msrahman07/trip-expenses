@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using API.DTOs;
 using Core.Entities.Identity;
 using Core.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -11,14 +14,26 @@ namespace API.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private readonly ITokenService tokenService;
+        private readonly DataContext context;
 
         public AccountController(UserManager<AppUser> userManager, 
             SignInManager<AppUser> signInManager,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            DataContext context)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.tokenService = tokenService;
+            this.context = context;
+        }
+
+        [HttpGet]
+        public async Task<string> GetCurrentUserDisplayName()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if(String.IsNullOrEmpty(email)) return null!;
+            return user.DisplayName;
         }
 
         [HttpPost("login")]
