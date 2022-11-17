@@ -1,14 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './app/App';
+import { Provider } from 'react-redux';
+import store from './app/stores/store';
+import App from './app/layout/App';
+import NavBar from './app/layout/NavBar';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <NavBar />
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 

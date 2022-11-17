@@ -1,8 +1,19 @@
 import { Formik, Field, Form, ErrorMessage } from 'formik';
-import React from 'react'
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import agent from '../../app/api/agent';
+import { ITrip } from '../../app/models/trip';
+import { closeModal } from '../../app/stores/modalStore'
+import TripStore from '../../app/stores/tripStore';
 
 const CreateTrip = () => {
+    const dispatch = useDispatch();
+    const store = TripStore;
+    
+    const handleCreate = (values:ITrip) => {
+        agent.Trips.create(values);
+        dispatch(closeModal());
+    }
     return (
         <>
             <h3>Create new trip</h3>
@@ -13,15 +24,16 @@ const CreateTrip = () => {
                         .max(15, 'Must be 15 characters or less')
                         .required('Required'),
                     description: Yup.string()
-                        .max(15, 'Must be 15 characters or less')
                         .required('Required'),
 
                 })}
                 onSubmit={(values, { setSubmitting }) => {
-                    setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        setSubmitting(false);
-                    }, 400);
+                    handleCreate(values)
+                    setSubmitting(false);
+                    // setTimeout(() => {
+                    //     alert(JSON.stringify(values, null, 2));
+                    //     setSubmitting(false);
+                    // }, 400);
                 }}
             >
                 <Form className='form-group'>
@@ -29,7 +41,7 @@ const CreateTrip = () => {
                     <Field className='form-control' name="name" type="text" />
                     <p className='text-danger'><ErrorMessage name="name" /></p>
 
-                    <label htmlFor="description">description</label>
+                    <label htmlFor="description">Description</label>
                     <Field className='form-control' name="description" type="text" />
                     <p className='text-danger'><ErrorMessage name="description" /></p>
 

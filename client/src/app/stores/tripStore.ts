@@ -1,11 +1,14 @@
 import agent from "../api/agent"
-import { trip } from "../models/trip";
+import { ITrip } from "../models/trip";
 
 export default class TripStore {
-    trips:trip[] = []
+    trips:ITrip[] = []
     loadTrips = async () => {
         const result = await agent.Trips.list();
         this.trips = result;
         console.log(this.trips);
+    }
+    createTrip = async (trip: ITrip) => {
+        await agent.Trips.create(trip);
     }
 }

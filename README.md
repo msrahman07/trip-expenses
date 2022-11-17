@@ -10,3 +10,6 @@ In this app users can add trips and attendees, add overall expenses shared among
     3. Created frontend with ReactJs Typescript, Bootstrap, Axios
     4. Agent file to correspond with backend API
     5. Created Expenses, trip attendee, Identity entities, with appUser and trips many to many relation
+    6. Enforced authentication and authorization, token generation
+    7. Create forms with Formik for login, signup, and creating new trips
+    8. Created reusable Modal for all the forms

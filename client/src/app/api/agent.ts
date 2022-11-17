@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios"
-import { trip } from "../models/trip";
+import { ITrip } from "../models/trip";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -13,8 +13,9 @@ const requests = {
 };
 
 const Trips = {
-    list: () => requests.get<trip[]>('/trips'),
-    details: (id: number) => requests.get<trip>(`/trips/${id}`),
+    list: () => requests.get<ITrip[]>('/trips'),
+    details: (id: number) => requests.get<ITrip>(`/trips/${id}`),
+    create: (trip: ITrip) => requests.post<ITrip>(`/trips`, trip),
     delete: (id: number) => requests.delete<void>(`/trips/${id}`),
 };
 

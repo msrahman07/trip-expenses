@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import agent from '../../app/api/agent';
-import { trip } from '../../app/models/trip';
+import { ITrip } from '../../app/models/trip';
 
 const Trips = () => {
-    const [trips, setTrips] = useState<trip[]>([]);
-
+    const [trips, setTrips] = useState<ITrip[]>([]);
     useEffect(() => {
         const result = agent.Trips.list().then(t => {
             setTrips(t);

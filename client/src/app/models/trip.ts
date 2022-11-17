@@ -1,5 +1,5 @@
-export interface trip {
+export interface ITrip {
     name: string;
     description: string;
-    totalExpense: number;
+    totalExpense?: number;
 }
