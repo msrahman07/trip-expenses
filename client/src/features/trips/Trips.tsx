@@ -13,7 +13,7 @@ const Trips = () => {
     return (
         <div className='row'>
             {trips.map((trip) => (
-                <div className='sec col-lg-4 col-sm-12'>
+                <div key={trip.name!} className='sec col-lg-4 col-sm-12'>
                     <h3>{trip.name}</h3>
                     {trip.description}
                 </div>

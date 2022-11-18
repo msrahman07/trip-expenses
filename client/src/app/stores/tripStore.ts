@@ -9,6 +9,8 @@ export default class TripStore {
         console.log(this.trips);
     }
     createTrip = async (trip: ITrip) => {
-        await agent.Trips.create(trip);
+        await agent.Trips.create(trip).catch(error => {
+            console.log(error);
+        });
     }
 }

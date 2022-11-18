@@ -4,7 +4,7 @@ export const modalStore = createSlice({
     name: 'modal',
     initialState: {
       open: false,
-      content: null,
+      content: null! as JSX.Element,
     },
     reducers: {
       openModal: (state, action) => {
@@ -13,10 +13,11 @@ export const modalStore = createSlice({
         // which detects changes to a "draft state" and produces a brand new
         // immutable state based off those changes
         state.open = true
-        state.content = action.payload
+        state.content = action.payload as JSX.Element
       },
       closeModal: (state) => {
-        state.open = false
+        state.open = false;
+        state.content = null!;
       },
     },
 });
