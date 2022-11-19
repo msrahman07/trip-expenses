@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import store from './app/stores/store';
 import App from './app/layout/App';
 import NavBar from './app/layout/NavBar';
+import { ToastContainer } from 'react-toastify';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

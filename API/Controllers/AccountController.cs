@@ -2,9 +2,10 @@ using System.Security.Claims;
 using API.DTOs;
 using Core.Entities.Identity;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -81,6 +82,12 @@ namespace API.Controllers
                     DisplayName = user.DisplayName,
                     Token = tokenService.CreateToken(user)
                 };
+        }
+
+        [HttpPost("logout")]
+        public void Logout()
+        {
+            Response.Headers.Remove("Authorization");
         }
         
     }

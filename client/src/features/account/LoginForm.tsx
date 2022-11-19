@@ -2,13 +2,14 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { IUser } from '../../app/models/user';
-import { closeModal } from '../../app/stores/modalStore';
+import { closeModal, openModal } from '../../app/stores/modalStore';
 import { loadingUser, loginUser } from '../../app/stores/userStore';
+import SignupForm from './SignupForm';
 
 const LoginForm = () => {
     const dispatch = useDispatch();
     const loading = useSelector(loadingUser);
+    
     useEffect(() => {
         if(!loading) {
             dispatch(closeModal());
@@ -42,7 +43,16 @@ const LoginForm = () => {
                     <Field className='form-control' name="password" type="text" />
                     <p className='text-danger'><ErrorMessage name="password" /></p>
 
-                    <button type="submit" className='btn btn-primary'>Submit</button>
+                    <button type="submit" className='btn btn-outline-primary'>Login</button> or {" "}
+                    
+                    <a onClick={() => dispatch(openModal(<SignupForm />))}
+                        style={{
+                            color: '#222a37',
+                            fontSize: '1.1em',
+                            cursor: 'pointer',
+                            textDecoration: 'underline'
+                        }}
+                    >Sign Up</a>
                 </Form>
             </Formik>
         </>

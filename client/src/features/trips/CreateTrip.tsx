@@ -4,14 +4,14 @@ import * as Yup from 'yup';
 import agent from '../../app/api/agent';
 import { ITrip } from '../../app/models/trip';
 import { closeModal } from '../../app/stores/modalStore'
-import TripStore from '../../app/stores/tripStore';
+import TripStore, { createTrip } from '../../app/stores/tripStore';
 
 const CreateTrip = () => {
     const dispatch = useDispatch();
     const store = TripStore;
     
     const handleCreate = (values:ITrip) => {
-        agent.Trips.create(values);
+        dispatch<any>(createTrip(values));
         dispatch(closeModal());
     }
     return (
@@ -45,7 +45,7 @@ const CreateTrip = () => {
                     <Field className='form-control' name="description" type="text" />
                     <p className='text-danger'><ErrorMessage name="description" /></p>
 
-                    <button type="submit" className='btn btn-primary'>Submit</button>
+                    <button type="submit" className='btn btn-outline-primary'>Submit</button>
                 </Form>
             </Formik>
         </>
