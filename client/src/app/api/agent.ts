@@ -62,6 +62,7 @@ const Trips = {
     delete: (id: number) => requests.delete<void>(`/trips/${id}`),
 };
 const Users = {
+    allUsers: () => requests.get<IUser[]>('/account/all'),
     current: () => requests.get<IUser>('/account'),
     login: (user: IUser) => requests.post<IUser>(`/account/login`, user),
     register: (user: IUser) => requests.post<IUser>(`/account/register`, user),

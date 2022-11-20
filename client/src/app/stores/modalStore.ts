@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { RootState } from "./store";
 
 export const modalStore = createSlice({
     name: 'modal',
@@ -24,7 +25,7 @@ export const modalStore = createSlice({
 
 export const { openModal, closeModal } = modalStore.actions;
   
-export const modalState = (state:any) => state.modal.open;
-export const modalContent = (state:any) => state.modal.content;
+export const modalState = (state:RootState) => state.modal.open;
+export const modalContent = (state:RootState) => state.modal.content;
   
 export default modalStore.reducer;

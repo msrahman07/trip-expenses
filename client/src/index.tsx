@@ -2,10 +2,34 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { Provider } from 'react-redux';
-import store from './app/stores/store';
+import {store} from './app/stores/store';
 import App from './app/layout/App';
 import NavBar from './app/layout/NavBar';
-import { ToastContainer } from 'react-toastify';
+
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+} from "react-router-dom";
+import Trips from './features/trips/Trips';
+import TripDetails from './features/trips/details/TripDetails';
+
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Trips />,
+    errorElement: <Trips />,
+  },
+  {
+    path: "/trips",
+    element: <Trips />,
+  },
+  {
+    path: "/trips/:tripId",
+    element: <TripDetails />,
+  },
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,8 +37,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <NavBar />
       <App />
+      <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>
 );

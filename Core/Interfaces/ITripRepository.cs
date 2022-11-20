@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.DTOs;
 using Core.Entities;
+using Core.Entities.Identity;
 
 namespace Core.Interfaces
 {
@@ -12,6 +13,7 @@ namespace Core.Interfaces
         Task<IReadOnlyList<TripDto>> GetAllTrips();
         Task<TripDto> GetTripById(int id);
         Task<Trip> CreateTrip(string email, string name, string description, decimal totalExpense = 0);
+        Task<Trip> AddAttendees(Trip trip);
         Task DeleteTrip(int id);
 
     }

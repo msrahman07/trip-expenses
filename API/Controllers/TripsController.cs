@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Core.DTOs;
 using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -23,12 +24,12 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<TripDto>>> GetAllTrips() 
+        public async Task<ActionResult<IReadOnlyList<TripDto>>> GetAllTrips()
         {
             return Ok(await tripRepo.GetAllTrips());
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<TripDto>> GetAllTrips(int id) 
+        public async Task<ActionResult<TripDto>> GetTripById(int id)
         {
             var trip = await tripRepo.GetTripById(id);
             return (trip != null) ? trip : NotFound();
@@ -42,7 +43,12 @@ namespace API.Controllers
             var result = await tripRepo.CreateTrip(email, trip.Name, trip.Description);
             return (result != null) ? Ok(trip) : BadRequest("Unable to create trip");
         }
+        [HttpPost("addAttendees")]
+        public async Task<ActionResult<Trip>> AddAttendees(Trip trip)
+        {
+            return await tripRepo.AddAttendees(trip);
 
+        }
         [HttpDelete("{id}")]
         public async Task DeleteTrip(int id)
         {

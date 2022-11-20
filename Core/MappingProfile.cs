@@ -18,6 +18,10 @@ namespace Core
                 .ForMember(d => d.DisplayName, o => o.MapFrom(
                     s => s.AppUser.DisplayName
                 ));
+            CreateMap<AppUser, AttendeeProfile>()
+                .ForMember(d => d.DisplayName, o => o.MapFrom(
+                    s => s.DisplayName
+                ));
             CreateMap<Trip, TripDto>();
         }
 

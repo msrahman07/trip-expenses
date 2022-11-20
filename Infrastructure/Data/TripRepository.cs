@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,19 @@ namespace Infrastructure.Data
             trip.Attendees.Add(attendee);
 
             await context.Trips.AddAsync(trip);
+            var result = await context.SaveChangesAsync();
+            if(result <= 0) return null!;
+            return trip;
+        }
+        public async Task<Trip> AddAttendees(Trip trip)
+        {
+            var currentTrip = await context.Trips.FirstOrDefaultAsync(t => t.Id == trip.Id);
+            if(currentTrip == null) return null!;
+            var attendees = new List<TripAttendee>();
+            foreach(var attendee in trip.Attendees)
+            {
+                currentTrip.Attendees.Add(attendee);
+            }
             var result = await context.SaveChangesAsync();
             if(result <= 0) return null!;
             return trip;

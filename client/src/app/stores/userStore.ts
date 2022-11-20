@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import agent from "../api/agent";
 import { IUser } from "../models/user";
+import { RootState } from "./store";
 
 export const loginUser = createAsyncThunk<
     IUser,
@@ -47,10 +48,18 @@ export const logoutUser = createAsyncThunk(
     }
 )
 
+export const getAllUsers = createAsyncThunk(
+    'users/getAllUsers',
+    async () => {
+        return await agent.Users.allUsers();
+    }
+)
+
 export const userStore = createSlice({
     name: 'users',
     initialState: {
-        user: {} as IUser,
+        user: null! as IUser,
+        allUsers: new Map<string, IUser>(),
         loading: true,
     },
     reducers: {
@@ -77,10 +86,17 @@ export const userStore = createSlice({
             state.user = null!;
             state.loading = true;
         })
+        builder.addCase(getAllUsers.fulfilled, (state, action) => {
+            action.payload.forEach((element:IUser) => {
+                state.allUsers.set(element.id!, element);    
+            });
+            
+        })
     }
 });
 
-export const currentUser = (state:any) => state.users.user;
-export const loadingUser = (state:any) => state.users.loading;
+export const currentUser = (state:RootState) => state.users.user;
+export const loadingUser = (state:RootState) => state.users.loading;
+export const allUsers = (state:RootState) => state.users.allUsers;
 export const userToken = window.localStorage.getItem('token');
 export default userStore.reducer;

@@ -2,8 +2,10 @@ import { configureStore } from '@reduxjs/toolkit'
 import modalReducer from './modalStore';
 import userReducer from './userStore';
 import tripReducer from './tripStore';
+import { enableMapSet } from 'immer'
 
-export default configureStore({
+enableMapSet()
+export const store = configureStore({
   reducer: {
     modal: modalReducer,
     users: userReducer,
@@ -14,3 +16,6 @@ export default configureStore({
       serializableCheck: false
     }),
 })
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

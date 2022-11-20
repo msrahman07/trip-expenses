@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using API.DTOs;
+using AutoMapper;
+using Core.Entities;
 using Core.Entities.Identity;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -14,14 +16,20 @@ namespace API.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private readonly ITokenService tokenService;
+        private readonly IAttendeeRepository attendeeRepository;
+        private readonly IMapper mapper;
 
         public AccountController(UserManager<AppUser> userManager, 
             SignInManager<AppUser> signInManager,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IAttendeeRepository attendeeRepository,
+            IMapper mapper)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.tokenService = tokenService;
+            this.attendeeRepository = attendeeRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -37,6 +45,13 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Token = tokenService.CreateToken(user)
             };
+        }
+
+        [HttpGet("all")]
+        public async Task<IReadOnlyList<AppUser>> GetAllUsers()
+        {
+            var users = await attendeeRepository.GetAllUsers();
+            return users;
         }
 
         [HttpPost("login")]
