@@ -48,10 +48,10 @@ namespace API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IReadOnlyList<AppUser>> GetAllUsers()
+        public async Task<IReadOnlyList<AttendeeProfile>> GetAllUsers()
         {
             var users = await attendeeRepository.GetAllUsers();
-            return users;
+            return mapper.Map<IReadOnlyList<AppUser>, IReadOnlyList<AttendeeProfile>>(users);
         }
 
         [HttpPost("login")]

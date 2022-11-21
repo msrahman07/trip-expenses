@@ -17,12 +17,16 @@ namespace Core
             CreateMap<TripAttendee, AttendeeProfile>()
                 .ForMember(d => d.DisplayName, o => o.MapFrom(
                     s => s.AppUser.DisplayName
+                ))
+                .ForMember(d => d.Id, o => o.MapFrom(
+                    s => s.AppUser.Id
                 ));
             CreateMap<AppUser, AttendeeProfile>()
                 .ForMember(d => d.DisplayName, o => o.MapFrom(
                     s => s.DisplayName
                 ));
-            CreateMap<Trip, TripDto>();
+            CreateMap<Trip, TripDto>()
+                .ForMember(s => s.Id, o => o.MapFrom(d => d.Id));
         }
 
     }

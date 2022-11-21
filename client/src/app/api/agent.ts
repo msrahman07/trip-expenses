@@ -60,7 +60,9 @@ const Trips = {
     details: (id: number) => requests.get<ITrip>(`/trips/${id}`),
     create: (trip: ITrip) => requests.post<ITrip>(`/trips`, trip),
     delete: (id: number) => requests.delete<void>(`/trips/${id}`),
+    addAttendees : (id: number, usersIds: string[]) => requests.post<ITrip>(`/trips/${id}/addAttendees`, usersIds),
 };
+
 const Users = {
     allUsers: () => requests.get<IUser[]>('/account/all'),
     current: () => requests.get<IUser>('/account'),

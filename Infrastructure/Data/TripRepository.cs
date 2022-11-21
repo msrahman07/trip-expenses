@@ -22,13 +22,14 @@ namespace Infrastructure.Data
             this.mapper = mapper;
         }
 
-        public async Task<Trip> CreateTrip(string email, string name, string description, 
+        public async Task<Trip> CreateTrip(string email, string name, string description,
             decimal totalExpense = 0)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if(user == null) return null!;
-            
-            var trip = new Trip {
+            if (user == null) return null!;
+
+            var trip = new Trip
+            {
                 Name = name,
                 Description = description,
                 TotalExpense = totalExpense
@@ -42,27 +43,64 @@ namespace Infrastructure.Data
 
             await context.Trips.AddAsync(trip);
             var result = await context.SaveChangesAsync();
-            if(result <= 0) return null!;
+            if (result <= 0) return null!;
             return trip;
         }
-        public async Task<Trip> AddAttendees(Trip trip)
+        public async Task<TripDto> AddAttendees(int id, List<string> usersIds)
         {
-            var currentTrip = await context.Trips.FirstOrDefaultAsync(t => t.Id == trip.Id);
-            if(currentTrip == null) return null!;
-            var attendees = new List<TripAttendee>();
-            foreach(var attendee in trip.Attendees)
+            // var currentTrip = await context.Trips.FirstOrDefaultAsync(t => t.Id == trip.Id);
+            var trip = await context.Trips
+                .Include(t => t.Attendees)
+                .ThenInclude(t => t.AppUser)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            if (trip == null) return null!;
+            List<TripAttendee> tempAttendees = new List<TripAttendee>();
+            foreach (var userId in usersIds)
             {
-                currentTrip.Attendees.Add(attendee);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                if (user != null)
+                {
+                    var tempAttendee = await context.TripAttendees.FirstOrDefaultAsync(ta => ta.AppUserId == user.Id && ta.TripId == trip.Id);
+                    if (tempAttendee == null)
+                    {
+                        tempAttendees.Add(new TripAttendee
+                        {
+                            AppUser = user,
+                            Trip = trip,
+                        });
+                    }
+                    else
+                    {
+                        tempAttendees.Add(tempAttendee);
+                    }
+                }
+            }
+            List<TripAttendee> deleteAttendees = trip.Attendees.Except(tempAttendees).ToList();
+            await DeleteTripAttendees(deleteAttendees);
+            trip.Attendees = tempAttendees;
+            // if(currentTrip == null) return null!;
+            // foreach(var attendee in trip.Attendees)
+            // {
+            //     currentTrip.Attendees.Add(attendee);
+            // }
+            var result = await context.SaveChangesAsync();
+            if (result <= 0) return null!;
+            return await GetTripById(trip.Id);
+        }
+
+        private async Task DeleteTripAttendees(List<TripAttendee> attendess)
+        {
+            foreach(var attendee in attendess)
+            {
+                context.TripAttendees.Remove(attendee);
             }
             var result = await context.SaveChangesAsync();
-            if(result <= 0) return null!;
-            return trip;
         }
 
         public async Task DeleteTrip(int id)
         {
             var trip = await context.Trips.FirstOrDefaultAsync(t => t.Id == id);
-            if(trip == null) return;
+            if (trip == null) return;
             context.Trips.Remove(trip);
             var result = await context.SaveChangesAsync();
             return;
@@ -83,7 +121,7 @@ namespace Infrastructure.Data
                 .Include(t => t.Attendees)
                 .ThenInclude(u => u.AppUser)
                 .FirstOrDefaultAsync(t => t.Id == id);
-            return  mapper.Map<Trip, TripDto>(trip!) ?? null!;
+            return mapper.Map<Trip, TripDto>(trip!) ?? null!;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Core.Entities
 {
     public class AttendeeProfile
     {
+        public string Id { get; set; } = null!;
         public string DisplayName { get; set; } = null!;
     }
 }

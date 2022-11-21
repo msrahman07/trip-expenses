@@ -22,3 +22,10 @@ body {
                      0 32px 64px -48px rgba(0, 0, 0, 0.5); */
 }
 
+.btn-outline-primary:hover {
+  background-color: #222a37;
+  border: none;
+}
+.btn-outline-primary {
+  border: none;
+}

@@ -40,7 +40,7 @@ const TripDetails = () => {
         </div>
         
           <div>
-            <AddAttendeeSection />
+            <AddAttendeeSection tripId={parseInt(tripId!)}/>
           </div>
         </>
       }

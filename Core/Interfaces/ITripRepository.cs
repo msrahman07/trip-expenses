@@ -13,7 +13,7 @@ namespace Core.Interfaces
         Task<IReadOnlyList<TripDto>> GetAllTrips();
         Task<TripDto> GetTripById(int id);
         Task<Trip> CreateTrip(string email, string name, string description, decimal totalExpense = 0);
-        Task<Trip> AddAttendees(Trip trip);
+        Task<TripDto> AddAttendees(int id, List<string> usersIds);
         Task DeleteTrip(int id);
 
     }

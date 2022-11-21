@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { number } from "yup";
 import agent from "../api/agent"
 import { ITrip } from "../models/trip";
 import { useAppSelector } from "./hooks";
@@ -38,16 +39,20 @@ ITrip,number
 >(
     'trips/getCurrentTrip',
     async (id:number) => {
-        // const trips = useAppSelector(loadedTrips);
-        // const filterdTrips = trips.filter(t => t.id === id);
-        // if(filterdTrips.length > 0){
-        //     console.log(filterdTrips[0])
-        //     return filterdTrips[0]
-        // }
         const result = await agent.Trips.details(id);
         return result;
     }
 );
+interface IAddAttendeeParams {
+    id: number;
+    userIds: string[];
+}
+export const addAttendees = createAsyncThunk<ITrip, IAddAttendeeParams>(
+    'trips/addAttendees',
+    async (atendees: IAddAttendeeParams) => {
+        return await agent.Trips.addAttendees(atendees.id, atendees.userIds);
+    }
+)
 
 const tripStore = createSlice({
     name: 'trips',
@@ -67,6 +72,10 @@ const tripStore = createSlice({
             state.loading = false;
         })
         builder.addCase(getCurrentTrip.fulfilled, (state, action) => {
+            state.currentTrip = action.payload;
+            state.loading = false;
+        })
+        builder.addCase(addAttendees.fulfilled, (state, action) => {
             state.currentTrip = action.payload;
             state.loading = false;
         })
