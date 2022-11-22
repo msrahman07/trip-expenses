@@ -27,6 +27,7 @@ namespace Core
                 ));
             CreateMap<Trip, TripDto>()
                 .ForMember(s => s.Id, o => o.MapFrom(d => d.Id));
+            CreateMap<Expense, ExpenseDto>();
         }
 
     }

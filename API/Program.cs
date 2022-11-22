@@ -41,6 +41,7 @@ builder.Services.AddSwaggerGen(
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAttendeeRepository, AttendeeRepository>();
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<DataContext>(config =>
 {

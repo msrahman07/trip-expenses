@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using API.DTOs;
 using Core.DTOs;
 using Core.Entities;
 using Core.Entities.Identity;
@@ -17,10 +18,12 @@ namespace API.Controllers
     public class TripsController : BaseApiController
     {
         private readonly ITripRepository tripRepo;
+        private readonly IExpenseRepository expenseRepo;
 
-        public TripsController(ITripRepository tripRepo)
+        public TripsController(ITripRepository tripRepo, IExpenseRepository expenseRepo)
         {
             this.tripRepo = tripRepo;
+            this.expenseRepo = expenseRepo;
         }
 
         [HttpGet]
@@ -46,9 +49,27 @@ namespace API.Controllers
         [HttpPost("{id}/addAttendees")]
         public async Task<ActionResult<TripDto>> AddAttendees(int id, List<string> usersIds)
         {
-            return await tripRepo.AddAttendees(id, usersIds);
+            var result = await tripRepo.AddAttendees(id, usersIds);
+            return (result != null) ? result : BadRequest("Unable to save attendees");
 
         }
+
+        [HttpPost("{id}/addExpense")]
+        public async Task<ActionResult<ExpenseDto>> AddNewExpense(int id, AddExpenseDto expense)
+        {
+            var result = await expenseRepo.AddNewExpense(id, expense.Title, expense.SpenderId, expense.SharedAmongAttendeesIds, expense.Amount);
+            return (result != null) ? result : BadRequest("Unable to save expense");
+
+        }
+
+        [HttpGet("{id}/getAllExpense")]
+        public async Task<ActionResult<IReadOnlyList<ExpenseDto>>> GetAllExpenses(int id)
+        {
+            var result = await expenseRepo.GetAllExpenses(id);
+            return (result != null) ? Ok(result) : BadRequest("Unable to save expense");
+
+        }
+
         [HttpDelete("{id}")]
         public async Task DeleteTrip(int id)
         {

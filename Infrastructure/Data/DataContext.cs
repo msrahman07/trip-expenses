@@ -33,6 +33,11 @@ namespace Infrastructure.Data
                 .HasOne(t => t.Trip)
                 .WithMany(u => u.Attendees)
                 .HasForeignKey(ta => ta.TripId);
+            
+            // builder.Entity<TripAttendee>()
+            //     .HasOne(t => t.Trip)
+            //     .WithMany(t => t.ex)
+            //     .HasForeignKey(ta => ta.TripId);
         }
     }
 }

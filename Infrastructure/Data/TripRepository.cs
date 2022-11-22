@@ -83,9 +83,12 @@ namespace Infrastructure.Data
             // {
             //     currentTrip.Attendees.Add(attendee);
             // }
-            var result = await context.SaveChangesAsync();
-            if (result <= 0) return null!;
-            return await GetTripById(trip.Id);
+            await context.SaveChangesAsync();
+            var tripToReturn = await context.Trips
+                .Include(t => t.Attendees)
+                .ThenInclude(u => u.AppUser)
+                .FirstOrDefaultAsync(t => t.Id == trip.Id);
+            return mapper.Map<Trip, TripDto>(tripToReturn!) ?? null!;
         }
 
         private async Task DeleteTripAttendees(List<TripAttendee> attendess)
@@ -111,6 +114,7 @@ namespace Infrastructure.Data
             var trips = await context.Trips
                 .Include(t => t.Attendees)
                 .ThenInclude(u => u.AppUser)
+                .Include(t => t.Expenses)
                 .ToListAsync();
             return mapper.Map<IReadOnlyList<Trip>, IReadOnlyList<TripDto>>(trips) ?? null!;
         }
@@ -120,6 +124,7 @@ namespace Infrastructure.Data
             var trip = await context.Trips
                 .Include(t => t.Attendees)
                 .ThenInclude(u => u.AppUser)
+                .Include(t => t.Expenses)
                 .FirstOrDefaultAsync(t => t.Id == id);
             return mapper.Map<Trip, TripDto>(trip!) ?? null!;
         }

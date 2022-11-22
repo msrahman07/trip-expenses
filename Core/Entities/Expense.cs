@@ -10,8 +10,11 @@ namespace Core.Entities
     {
         public string Title { get; set; } = null!;
         public decimal Amount { get; set; }
-        public AppUser Spender { get; set; } = null!;
-        public bool DividedEqually { get; set; }
-        public List<AppUser> SharedAmongAttendees { get; set; } = new List<AppUser>();
+        public decimal SharedAmount { get; set; }
+        public TripAttendee Spender { get; set; } = null!;
+        public bool DividedEqually { get; set; } = true;
+        public List<TripAttendee> SharedAmongAttendees { get; set; } = new List<TripAttendee>();
     }
 }
+
+// dotnet ef migrations add ExpenseEntityModified -p Infrastructure -s API -c DataContext

@@ -13,6 +13,6 @@ namespace Core.DTOs
         public string Description { get; set; } = null!;
         public decimal TotalExpense { get; set; } = 0.0M;
         public List<AttendeeProfile> Attendees { get; set; } = new List<AttendeeProfile>();
-        public List<Expense> Expenses { get; set; } = new List<Expense>();
+        public List<ExpenseDto> Expenses { get; set; } = new List<ExpenseDto>();
     }
 }

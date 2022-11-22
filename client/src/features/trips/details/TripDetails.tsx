@@ -16,7 +16,7 @@ const TripDetails = () => {
   return (
 
     <>
-      {trip !== null &&
+      {trip &&
       <>
         <div
           className='sec row'
