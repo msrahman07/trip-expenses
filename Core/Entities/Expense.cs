@@ -13,7 +13,7 @@ namespace Core.Entities
         public decimal SharedAmount { get; set; }
         public TripAttendee Spender { get; set; } = null!;
         public bool DividedEqually { get; set; } = true;
-        public List<TripAttendee> SharedAmongAttendees { get; set; } = new List<TripAttendee>();
+        public List<AttendeeExpense> SharedAmongAttendees { get; set; } = new List<AttendeeExpense>();
     }
 }
 

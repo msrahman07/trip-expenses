@@ -75,5 +75,10 @@ namespace API.Controllers
         {
             await tripRepo.DeleteTrip(id);
         }
+        [HttpDelete("{id}/{expenseId}")]
+        public async Task DeleteExpense(int expenseId)
+        {
+            await expenseRepo.DeleteExpense(expenseId);
+        }
     }
 }

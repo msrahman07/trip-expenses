@@ -10,5 +10,6 @@ namespace Core.Entities.Identity
     {
         public string DisplayName { get; set; } = null!;
         public List<TripAttendee> Trips { get; set; } = new List<TripAttendee>();
+        public List<AttendeeExpense> Expenses { get; set; } = new List<AttendeeExpense>();
     }
 }

@@ -8,6 +8,7 @@ namespace Core.DTOs
 {
     public class ExpenseDto
     {
+        public int Id { get; set; }
         public string Title { get; set; } = null!;
         public decimal Amount { get; set; }
         public decimal SharedAmount { get; set; }

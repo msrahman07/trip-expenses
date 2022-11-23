@@ -17,6 +17,7 @@ namespace Infrastructure.Data
         public DbSet<Trip> Trips { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
         public DbSet<TripAttendee> TripAttendees { get; set; } = null!;
+        public DbSet<AttendeeExpense> AttendeeExpenses { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -34,10 +35,18 @@ namespace Infrastructure.Data
                 .WithMany(u => u.Attendees)
                 .HasForeignKey(ta => ta.TripId);
             
-            // builder.Entity<TripAttendee>()
-            //     .HasOne(t => t.Trip)
-            //     .WithMany(t => t.ex)
-            //     .HasForeignKey(ta => ta.TripId);
+            
+            builder.Entity<AttendeeExpense>(t => t.HasKey(ta => new {ta.AppUserId, ta.ExpenseId}));
+            
+            builder.Entity<AttendeeExpense>()
+                .HasOne(t => t.AppUser)
+                .WithMany(t => t.Expenses)
+                .HasForeignKey(ta => ta.AppUserId);
+
+            builder.Entity<AttendeeExpense>()
+                .HasOne(t => t.Expense)
+                .WithMany(t => t.SharedAmongAttendees)
+                .HasForeignKey(ta => ta.ExpenseId);
         }
     }
 }

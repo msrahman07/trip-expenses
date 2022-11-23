@@ -30,14 +30,23 @@ namespace Infrastructure.Data
             if (trip == null) return null!;
             var spender = trip.Attendees.Find(a => a.AppUserId == spenderId);
             var sharedAmongAttendees = trip.Attendees.FindAll(a => sharedAmongAttendeesIds.Any(sa => sa == a.AppUserId));
+            
             var newExpense = new Expense
             {
                 Title = title,
                 Amount = amount,
                 SharedAmount = amount / (sharedAmongAttendees.Count + 1),
-                Spender = spender!,
-                SharedAmongAttendees = sharedAmongAttendees
+                Spender = spender!
             };
+            foreach(var attendees in sharedAmongAttendees)
+            {
+                var attendee = new AttendeeExpense
+                {
+                    AppUser = attendees.AppUser,
+                    Expense = newExpense
+                };
+                newExpense.SharedAmongAttendees.Add(attendee);
+            }
 
             trip.Expenses.Add(newExpense);
             await context.Expenses.AddAsync(newExpense);
@@ -51,9 +60,19 @@ namespace Infrastructure.Data
                 .Include(t => t.Attendees)
                 .ThenInclude(u => u.AppUser)
                 .Include(t => t.Expenses)
+                .ThenInclude(e => e.SharedAmongAttendees)
                 .FirstOrDefaultAsync(t => t.Id == tripId);
             var expenses = (trip != null) ? trip.Expenses : new List<Expense>();
             return mapper.Map<IReadOnlyList<Expense>, IReadOnlyList<ExpenseDto>>(expenses);
+        }
+
+        public async Task DeleteExpense(int ExpenseId)
+        {
+            var expense = await context.Expenses.FirstOrDefaultAsync(e => e.Id == ExpenseId);
+            if (expense == null) return;
+            context.Expenses.Remove(expense);
+            var result = await context.SaveChangesAsync();
+            return;
         }
     }
 }

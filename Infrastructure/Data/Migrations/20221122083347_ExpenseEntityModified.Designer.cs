@@ -11,14 +11,29 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221114061033_IdentityAndExpenses")]
-    partial class IdentityAndExpenses
+    [Migration("20221122083347_ExpenseEntityModified")]
+    partial class ExpenseEntityModified
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.0");
+
+            modelBuilder.Entity("Core.Entities.AttendeeExpense", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ExpenseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AppUserId", "ExpenseId");
+
+                    b.HasIndex("ExpenseId");
+
+                    b.ToTable("AttendeeExpenses");
+                });
 
             modelBuilder.Entity("Core.Entities.Expense", b =>
                 {
@@ -32,8 +47,15 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("DividedEqually")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SpenderId")
+                    b.Property<decimal>("SharedAmount")
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("SpenderAppUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SpenderTripId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -44,9 +66,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SpenderId");
-
                     b.HasIndex("TripId");
+
+                    b.HasIndex("SpenderAppUserId", "SpenderTripId");
 
                     b.ToTable("Expenses");
                 });
@@ -72,9 +94,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ExpenseId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("LockoutEnabled")
@@ -111,8 +130,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExpenseId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -289,24 +306,38 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Entities.AttendeeExpense", b =>
+                {
+                    b.HasOne("Core.Entities.Identity.AppUser", "AppUser")
+                        .WithMany("Expenses")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Expense", "Expense")
+                        .WithMany("SharedAmongAttendees")
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Expense");
+                });
+
             modelBuilder.Entity("Core.Entities.Expense", b =>
                 {
-                    b.HasOne("Core.Entities.Identity.AppUser", "Spender")
-                        .WithMany()
-                        .HasForeignKey("SpenderId");
-
                     b.HasOne("Core.Entities.Trip", null)
                         .WithMany("Expenses")
                         .HasForeignKey("TripId");
 
-                    b.Navigation("Spender");
-                });
+                    b.HasOne("Core.Entities.TripAttendee", "Spender")
+                        .WithMany()
+                        .HasForeignKey("SpenderAppUserId", "SpenderTripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Core.Entities.Identity.AppUser", b =>
-                {
-                    b.HasOne("Core.Entities.Expense", null)
-                        .WithMany("SharedAmongAttendees")
-                        .HasForeignKey("ExpenseId");
+                    b.Navigation("Spender");
                 });
 
             modelBuilder.Entity("Core.Entities.TripAttendee", b =>
@@ -386,6 +417,8 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Core.Entities.Identity.AppUser", b =>
                 {
+                    b.Navigation("Expenses");
+
                     b.Navigation("Trips");
                 });
 

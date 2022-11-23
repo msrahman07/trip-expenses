@@ -21,10 +21,17 @@ namespace Core
                 .ForMember(d => d.Id, o => o.MapFrom(
                     s => s.AppUser.Id
                 ));
-            CreateMap<AppUser, AttendeeProfile>()
+            CreateMap<AttendeeExpense, AttendeeProfile>()
                 .ForMember(d => d.DisplayName, o => o.MapFrom(
-                    s => s.DisplayName
+                    s => s.AppUser.DisplayName
+                ))
+                .ForMember(d => d.Id, o => o.MapFrom(
+                    s => s.AppUser.Id
                 ));
+            CreateMap<AppUser, AttendeeProfile>()
+            .ForMember(d => d.DisplayName, o => o.MapFrom(
+                s => s.DisplayName
+            ));
             CreateMap<Trip, TripDto>()
                 .ForMember(s => s.Id, o => o.MapFrom(d => d.Id));
             CreateMap<Expense, ExpenseDto>();

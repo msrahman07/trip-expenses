@@ -6,11 +6,12 @@ using Core.Entities.Identity;
 
 namespace Core.Entities
 {
-    public class TripAttendee
+    public class AttendeeExpense
     {
         public string AppUserId { get; set; } = null!;
         public AppUser AppUser { get; set; } = null!;
-        public int TripId { get; set; }
-        public Trip Trip { get; set; } = null!;
+        
+        public int ExpenseId { get; set; }
+        public Expense Expense { get; set; } = null!;
     }
 }

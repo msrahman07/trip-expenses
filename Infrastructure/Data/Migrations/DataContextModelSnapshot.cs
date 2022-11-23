@@ -17,6 +17,21 @@ namespace Infrastructure.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.0");
 
+            modelBuilder.Entity("Core.Entities.AttendeeExpense", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ExpenseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AppUserId", "ExpenseId");
+
+                    b.HasIndex("ExpenseId");
+
+                    b.ToTable("AttendeeExpenses");
+                });
+
             modelBuilder.Entity("Core.Entities.Expense", b =>
                 {
                     b.Property<int>("Id")
@@ -153,12 +168,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("TripId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ExpenseId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("AppUserId", "TripId");
-
-                    b.HasIndex("ExpenseId");
 
                     b.HasIndex("TripId");
 
@@ -293,6 +303,25 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Entities.AttendeeExpense", b =>
+                {
+                    b.HasOne("Core.Entities.Identity.AppUser", "AppUser")
+                        .WithMany("Expenses")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.Expense", "Expense")
+                        .WithMany("SharedAmongAttendees")
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Expense");
+                });
+
             modelBuilder.Entity("Core.Entities.Expense", b =>
                 {
                     b.HasOne("Core.Entities.Trip", null)
@@ -315,10 +344,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Core.Entities.Expense", null)
-                        .WithMany("SharedAmongAttendees")
-                        .HasForeignKey("ExpenseId");
 
                     b.HasOne("Core.Entities.Trip", "Trip")
                         .WithMany("Attendees")
@@ -389,6 +414,8 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Core.Entities.Identity.AppUser", b =>
                 {
+                    b.Navigation("Expenses");
+
                     b.Navigation("Trips");
                 });
 

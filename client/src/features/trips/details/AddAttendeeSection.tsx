@@ -5,37 +5,34 @@ import { useAppDispatch, useAppSelector } from '../../../app/stores/hooks'
 import { addAttendees, currentTrip } from '../../../app/stores/tripStore';
 import { allUsers, getAllUsers } from '../../../app/stores/userStore'
 import { IAddAttendeeParams } from '../../../app/types/types';
+import CommonSelectionTemplate from './CommonSelectionTemplate';
+import ShowSelectedItem from './ShowSelectedItem';
 
 const AddAttendeeSection = ({ tripId }: { tripId: number }) => {
     const allusers = useAppSelector(allUsers);
     const dispatch = useAppDispatch();
-    const [selectedAttendeeId, setSelectedAttendeeId] = useState<string[]>([]);
     const currentTripSelected = useAppSelector(currentTrip)
+    const [selectedAttendeeId, setSelectedAttendeeId] = useState<IAttendee[]>(currentTripSelected.attendees ?? []);
     useEffect(() => {
-        const newArrayOfIds:string[] = [];
-        currentTripSelected.attendees?.forEach((item:IAttendee) => {
-            newArrayOfIds.push(item.id);
-        })
-        setSelectedAttendeeId([...newArrayOfIds]);
         dispatch(getAllUsers());
     }, [])
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         let id = event.target.value;
-        if (selectedAttendeeId.filter(i => i === id).length === 0) {
-            setSelectedAttendeeId([...selectedAttendeeId, id])
+        if (selectedAttendeeId.filter(at => at.id === id).length === 0) {
+            setSelectedAttendeeId([...selectedAttendeeId, { id: id, displayName: allusers.get(id)?.displayName! }])
         }
     }
 
     const saveAttendees = (tripId: number) => {
         const attendees: IAddAttendeeParams = {
-            id: tripId, userIds: selectedAttendeeId
+            id: tripId, userIds: selectedAttendeeId.map(at => at.id)
         }
         dispatch(addAttendees(attendees))
     }
 
     const removeAttendeeId = (id: string) => {
-        const newAttendeeIds = selectedAttendeeId.filter(i => i !== id);
+        const newAttendeeIds = selectedAttendeeId.filter(at => at.id !== id);
         setSelectedAttendeeId([...newAttendeeIds])
     }
 
@@ -43,48 +40,22 @@ const AddAttendeeSection = ({ tripId }: { tripId: number }) => {
         <div className='row sec'>
             <div className='col-sm-4'>
                 {allusers.values() &&
-                    <select
-                        className="form-select"
-                        multiple aria-label="size 3 select"
-                        onChange={(e) => handleChange(e)}
-                    // onSelect={(e) => console.log(e.target)}
-                    >
-                        {Array.from(allusers.values()).map((user) => (
-                            <option key={user.id} value={user.id}>{user.displayName}</option>
-                        ))}
-                    </select>
+                    <CommonSelectionTemplate usersToSelect={Array.from(allusers.values())} handleChange={handleChange}/>
+                    // <select
+                    //     className="form-select"
+                    //     size={3}
+                    //     aria-label="size 3 select"
+                    //     onChange={(e) => handleChange(e)}
+                    // // onSelect={(e) => console.log(e.target)}
+                    // >
+                    //     {Array.from(allusers.values()).map((user) => (
+                    //         <option key={user.id} value={user.id}>{user.displayName}</option>
+                    //     ))}
+                    // </select>
                 }
             </div>
-            <div className='col-sm-8 d-sm-inline-flex'>
-                {selectedAttendeeId.map((i) => (
-                    <div
-                        style={{
-                            padding: '5px 10px',
-                            borderRadius: '5px',
-                            backgroundColor: '#8fb5f4fb',
-                            width: 'fit-content',
-                            height: 'fit-content',
-                            margin: '10px',
-                            cursor: 'pointer',
-                        }}
-                        key={i}
-                        onClick={() => removeAttendeeId(i)}
-                    >
-                        <span>{allusers.get(i)?.displayName}</span>
-                        <span 
-                            style={{
-                                position:'relative', 
-                                fontSize:'0.8em', 
-                                top: '-7px', 
-                                float:'right', 
-                                right:'-5px',
-                                color: '#5c5555'
-                            }}
-                        >
-                            x
-                        </span>
-                    </div>
-                ))}
+            <div className='col-sm-8'>
+                <ShowSelectedItem selectedAttendees={selectedAttendeeId} removeAttendee={removeAttendeeId} />
             </div>
             <button
                 className='btn btn-outline-primary'

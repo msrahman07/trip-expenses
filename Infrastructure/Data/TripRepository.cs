@@ -115,6 +115,7 @@ namespace Infrastructure.Data
                 .Include(t => t.Attendees)
                 .ThenInclude(u => u.AppUser)
                 .Include(t => t.Expenses)
+                .ThenInclude(e => e.SharedAmongAttendees)
                 .ToListAsync();
             return mapper.Map<IReadOnlyList<Trip>, IReadOnlyList<TripDto>>(trips) ?? null!;
         }
@@ -125,6 +126,7 @@ namespace Infrastructure.Data
                 .Include(t => t.Attendees)
                 .ThenInclude(u => u.AppUser)
                 .Include(t => t.Expenses)
+                .ThenInclude(e => e.SharedAmongAttendees)
                 .FirstOrDefaultAsync(t => t.Id == id);
             return mapper.Map<Trip, TripDto>(trip!) ?? null!;
         }
