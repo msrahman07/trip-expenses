@@ -1,4 +1,5 @@
 import { IAttendee } from "./attendee";
+import { IExpenseRes } from "./expense";
 
 export interface ITrip {
     id?: number;
@@ -6,4 +7,5 @@ export interface ITrip {
     description: string;
     totalExpense?: number;
     attendees?: IAttendee[];
+    expenses?: IExpenseRes[];
 }

@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { number } from "yup";
 import agent from "../api/agent"
+import { IExpenseReq, IExpenseRes } from "../models/expense";
 import { ITrip } from "../models/trip";
+import { IExpenseParams } from "../types/types";
 import { useAppSelector } from "./hooks";
 import { RootState } from "./store";
 
@@ -53,6 +55,12 @@ export const addAttendees = createAsyncThunk<ITrip, IAddAttendeeParams>(
         return await agent.Trips.addAttendees(atendees.id, atendees.userIds);
     }
 )
+export const addExpense = createAsyncThunk<IExpenseRes, IExpenseParams>(
+    'trips/addExpense',
+    async (expense: IExpenseParams) => {
+        return await agent.Trips.addExpense(expense.tripId, expense.expense);
+    }
+)
 
 const tripStore = createSlice({
     name: 'trips',
@@ -77,6 +85,10 @@ const tripStore = createSlice({
         })
         builder.addCase(addAttendees.fulfilled, (state, action) => {
             state.currentTrip = action.payload;
+            state.loading = false;
+        })
+        builder.addCase(addExpense.fulfilled, (state, action) => {
+            state.currentTrip.expenses?.push(action.payload);
             state.loading = false;
         })
     }
