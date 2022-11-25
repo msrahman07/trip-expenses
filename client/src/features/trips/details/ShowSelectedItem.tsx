@@ -8,14 +8,11 @@ interface Iprop {
 
 const ShowSelectedItem = ({ selectedAttendees, removeAttendee }: Iprop) => {
     return (
-        <div className='d-sm-inline-flex'>
+        <div className='row'>
             {selectedAttendees.map((attendee) => (
+
                 <div
-                    key={(attendee !== undefined) ? attendee.id : null}
-                >
-                {(attendee !== undefined) &&
-                
-                    <div
+                    className='col'
                     style={{
                         padding: '5px 10px',
                         borderRadius: '5px',
@@ -24,6 +21,7 @@ const ShowSelectedItem = ({ selectedAttendees, removeAttendee }: Iprop) => {
                         height: 'fit-content',
                         margin: '10px',
                         cursor: 'pointer',
+                        textAlign: 'center',
                     }}
                     key={attendee.id}
                     onClick={() => removeAttendee(attendee.id)}
@@ -42,9 +40,7 @@ const ShowSelectedItem = ({ selectedAttendees, removeAttendee }: Iprop) => {
                         x
                     </span>
                 </div>
-            }
-                </div>
-                
+
             ))}
         </div>
     )

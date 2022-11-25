@@ -48,7 +48,7 @@ const SignupForm = () => {
                     <p className='text-danger'><ErrorMessage name="email" /></p>
 
                     <label htmlFor="password">Password</label>
-                    <Field className='form-control' name="password" type="text" />
+                    <Field className='form-control' name="password" type="password" />
                     <p className='text-danger'><ErrorMessage name="password" /></p>
 
                     <button type="submit" className='btn btn-outline-primary'>Register</button> or {" "}

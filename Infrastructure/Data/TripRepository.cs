@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
@@ -22,7 +18,7 @@ namespace Infrastructure.Data
             this.mapper = mapper;
         }
 
-        public async Task<Trip> CreateTrip(string email, string name, string description,
+        public async Task<TripDto> CreateTrip(string email, string name, string description,
             decimal totalExpense = 0)
         {
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -44,7 +40,7 @@ namespace Infrastructure.Data
             await context.Trips.AddAsync(trip);
             var result = await context.SaveChangesAsync();
             if (result <= 0) return null!;
-            return trip;
+            return mapper.Map<Trip, TripDto>(trip);
         }
         public async Task<TripDto> AddAttendees(int id, List<string> usersIds)
         {

@@ -37,35 +37,38 @@ const AddAttendeeSection = ({ tripId }: { tripId: number }) => {
     }
 
     return (
-        <div className='row sec'>
-            <div className='col-sm-4'>
-                {allusers.values() &&
-                    <CommonSelectionTemplate usersToSelect={Array.from(allusers.values())} handleChange={handleChange}/>
-                    // <select
-                    //     className="form-select"
-                    //     size={3}
-                    //     aria-label="size 3 select"
-                    //     onChange={(e) => handleChange(e)}
-                    // // onSelect={(e) => console.log(e.target)}
-                    // >
-                    //     {Array.from(allusers.values()).map((user) => (
-                    //         <option key={user.id} value={user.id}>{user.displayName}</option>
-                    //     ))}
-                    // </select>
-                }
+        <div className='sec'>
+            <div className='row'>
+
+                <div className='col-sm-4'>
+                    {allusers.values() &&
+                        <CommonSelectionTemplate usersToSelect={Array.from(allusers.values())} handleChange={handleChange} />
+                        // <select
+                        //     className="form-select"
+                        //     size={3}
+                        //     aria-label="size 3 select"
+                        //     onChange={(e) => handleChange(e)}
+                        // // onSelect={(e) => console.log(e.target)}
+                        // >
+                        //     {Array.from(allusers.values()).map((user) => (
+                        //         <option key={user.id} value={user.id}>{user.displayName}</option>
+                        //     ))}
+                        // </select>
+                    }
+                </div>
+                <div className='col-sm-8'>
+                    <ShowSelectedItem selectedAttendees={selectedAttendeeId} removeAttendee={removeAttendeeId} />
+                </div>
+                <button
+                    className='btn btn-outline-primary'
+                    style={{
+                        marginTop: '10px'
+                    }}
+                    onClick={() => saveAttendees(tripId)}
+                >
+                    Save Attendees
+                </button>
             </div>
-            <div className='col-sm-8'>
-                <ShowSelectedItem selectedAttendees={selectedAttendeeId} removeAttendee={removeAttendeeId} />
-            </div>
-            <button
-                className='btn btn-outline-primary'
-                style={{
-                    marginTop: '10px'
-                }}
-                onClick={() => saveAttendees(tripId)}
-            >
-                Save Attendees
-            </button>
 
         </div>
 

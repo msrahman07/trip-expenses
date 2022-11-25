@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
@@ -35,7 +31,7 @@ namespace Infrastructure.Data
             {
                 Title = title,
                 Amount = amount,
-                SharedAmount = amount / (sharedAmongAttendees.Count + 1),
+                SharedAmount = amount / (sharedAmongAttendees.Count),
                 Spender = spender!
             };
             foreach(var attendees in sharedAmongAttendees)

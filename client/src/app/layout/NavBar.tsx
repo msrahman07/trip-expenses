@@ -13,6 +13,7 @@ const NavBar = () => {
     const dispatch = useDispatch();
     const userLoading = useSelector(loadingUser);
     const user = useSelector(currentUser);
+    
     useEffect(() => {
         dispatch<any>(getCurrentUser());
     }, []);
@@ -20,13 +21,13 @@ const NavBar = () => {
     return (
         <Navbar expand="lg" style={{
             backgroundColor: "#222a37", marginBottom: '20px'
-        }} variant="dark">
+        }} variant="dark" sticky='top'>
             <Container>
                 <Navbar.Brand href="/">Trip Expenses</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
+                        <Nav.Link href="/">Home</Nav.Link>
                         {(!userLoading) ?
                             <>
                                 <Nav.Link onClick={() => dispatch(openModal(<CreateTrip />))}>Create New Trip</Nav.Link>

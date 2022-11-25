@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 import { IAttendee } from '../../../app/models/attendee';
 import { useAppDispatch, useAppSelector } from '../../../app/stores/hooks';
 import { addExpense, currentTrip } from '../../../app/stores/tripStore';
@@ -19,7 +20,6 @@ const AddExpenses = () => {
     useEffect(() => {
         if (spender !== null) {
             setSelectAttendees(tripAttendees?.filter(at => at.id !== spender.id));
-            setSharees(sharees?.filter(at => at.id !== spender.id));
         }
 
     }, [spender]);
@@ -27,15 +27,18 @@ const AddExpenses = () => {
 
     const handleAddSpender = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const id = e.target.value;
-        var newSender = tripAttendees?.filter(at => at.id === id)[0] ?? null
+        var newSender = selectAttendees?.filter(at => at.id === id)[0] ?? null
         setSpender(newSender);
     }
 
     const handleAddSharees = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const id = e.target.value;
         if (sharees.filter(at => at.id === id).length === 0) {
-            setSharees([...sharees, ...selectAttendees?.filter(at => at.id === id)!]);
+            setSharees([...sharees, ...tripAttendees?.filter(at => at.id === id)!]);
         }
+    }
+    const handleAddAllSharees = () => {
+        setSharees([...tripAttendees!]);
     }
     const removeSpender = (id: string) => {
         setSpender(null);
@@ -61,7 +64,10 @@ const AddExpenses = () => {
                 sharedAmongAttendeesIds: sharees.map(at => at.id),
                 amount: amount!
             }
-        }));
+        })).then(() => {
+            setShowSection('spender');
+            toast.success('New expense added')
+        });
     }
 
     return (
@@ -91,9 +97,9 @@ const AddExpenses = () => {
             {showSection === 'sharees' &&
 
                 <div className="row">
-                    <h4>Select Sharees</h4>
+                    <span><h4>Select Sharees</h4> <span onClick={handleAddAllSharees}>Select All</span></span>
                     <div className='col-sm-4'>
-                        <CommonSelectionTemplate usersToSelect={selectAttendees!} handleChange={handleAddSharees} />
+                        <CommonSelectionTemplate usersToSelect={tripAttendees!} handleChange={handleAddSharees} />
                     </div>
                     <div className='col-sm-8'>
                         <ShowSelectedItem selectedAttendees={sharees} removeAttendee={removeSharee} />

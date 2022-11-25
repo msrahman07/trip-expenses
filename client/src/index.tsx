@@ -38,7 +38,9 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
-      <RouterProvider router={router} />
+      <div className='container'>
+        <RouterProvider router={router} />
+      </div>
     </Provider>
   </React.StrictMode>
 );

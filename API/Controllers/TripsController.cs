@@ -40,11 +40,11 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<Trip>> CreateTrip(Trip trip)
+        public async Task<ActionResult<TripDto>> CreateTrip(Trip trip)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
             var result = await tripRepo.CreateTrip(email, trip.Name, trip.Description);
-            return (result != null) ? Ok(trip) : BadRequest("Unable to create trip");
+            return (result != null) ? result : BadRequest("Unable to create trip");
         }
         [HttpPost("{id}/addAttendees")]
         public async Task<ActionResult<TripDto>> AddAttendees(int id, List<string> usersIds)
