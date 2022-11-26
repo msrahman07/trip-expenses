@@ -69,6 +69,13 @@ namespace API.Controllers
             return (result != null) ? Ok(result) : BadRequest("Unable to save expense");
 
         }
+        
+        [HttpGet("{id}/getExpenseReport")]
+        public async Task <ActionResult<ExpenseReportDto>> GetExpenseReport(int id)
+        {
+            var report = await expenseRepo.GenerateExpenseReport(id);
+            return report != null ? report : BadRequest("Unable to generate report");
+        }
 
         [HttpDelete("{id}")]
         public async Task DeleteTrip(int id)

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AutoMapper;
 using Core.DTOs;
 using Core.Entities;
@@ -26,7 +27,7 @@ namespace Infrastructure.Data
             if (trip == null) return null!;
             var spender = trip.Attendees.Find(a => a.AppUserId == spenderId);
             var sharedAmongAttendees = trip.Attendees.FindAll(a => sharedAmongAttendeesIds.Any(sa => sa == a.AppUserId));
-            
+
             var newExpense = new Expense
             {
                 Title = title,
@@ -34,7 +35,7 @@ namespace Infrastructure.Data
                 SharedAmount = amount / (sharedAmongAttendees.Count),
                 Spender = spender!
             };
-            foreach(var attendees in sharedAmongAttendees)
+            foreach (var attendees in sharedAmongAttendees)
             {
                 var attendee = new AttendeeExpense
                 {
@@ -69,6 +70,81 @@ namespace Infrastructure.Data
             context.Expenses.Remove(expense);
             var result = await context.SaveChangesAsync();
             return;
+        }
+
+        public async Task<ExpenseReportDto> GenerateExpenseReport(int tripId)
+        {
+            var expenses = await GetAllExpenses(tripId);
+            if (expenses == null) return null!;
+
+            var expenseReport = new ExpenseReportDto();
+            foreach (var expense in expenses)
+            {
+                var owedTo = expense.Spender.Id!;
+                if (expenseReport.OwingReport.ContainsKey(owedTo))
+                {
+                    foreach (var sharee in expense.SharedAmongAttendees)
+                    {
+                        if (expenseReport.OwingReport[owedTo].ContainsKey(sharee.Id))
+                        {
+                            expenseReport.OwingReport[owedTo][sharee.Id] += expense.SharedAmount;
+                        }
+                        else if (sharee.Id != owedTo)
+                        {
+                            // expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
+                            if (sharee.Id != owedTo)
+                            {
+                                //new edit after working solution
+                                if (expenseReport.OwingReport.ContainsKey(sharee.Id) && expenseReport.OwingReport[sharee.Id].ContainsKey(owedTo))
+                                {
+                                    if (expenseReport.OwingReport[sharee.Id][owedTo] >= expense.SharedAmount)
+                                    {
+                                        expenseReport.OwingReport[sharee.Id][owedTo] -= expense.SharedAmount;
+                                    }
+                                    else
+                                    {
+                                        expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount - expenseReport.OwingReport[sharee.Id][owedTo]);
+                                        expenseReport.OwingReport[sharee.Id].Remove(owedTo);
+
+                                    }
+                                }
+                                else
+                                {
+                                    expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    expenseReport.OwingReport.Add(owedTo, new Dictionary<string, decimal>());
+                    foreach (var sharee in expense.SharedAmongAttendees)
+                    {
+                        if (sharee.Id != owedTo)
+                        {
+                            //new edit after working solution
+                            if (expenseReport.OwingReport.ContainsKey(sharee.Id) && expenseReport.OwingReport[sharee.Id].ContainsKey(owedTo))
+                            {
+                                if (expenseReport.OwingReport[sharee.Id][owedTo] >= expense.SharedAmount)
+                                {
+                                    expenseReport.OwingReport[sharee.Id][owedTo] -= expense.SharedAmount;
+                                }
+                                else
+                                {
+                                    expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount - expenseReport.OwingReport[sharee.Id][owedTo]);
+                                    expenseReport.OwingReport[sharee.Id].Remove(owedTo);
+                                }
+                            }
+                            else
+                            {
+                                expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
+                            }
+                        }
+                    }
+                }
+            }
+            return expenseReport;
         }
     }
 }

@@ -2,9 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { number } from "yup";
 import agent from "../api/agent"
 import { IExpenseReq, IExpenseRes } from "../models/expense";
+import { IExpenseReport } from "../models/expenseReport";
 import { ITrip } from "../models/trip";
 import { IExpenseParams } from "../types/types";
-import { useAppSelector } from "./hooks";
+import { useAppDispatch, useAppSelector } from "./hooks";
 import { RootState } from "./store";
 
 // const tripRegistry = new Map<string, ITrip>();
@@ -12,7 +13,8 @@ import { RootState } from "./store";
 interface initialStateType {
     trips: ITrip[],
     currentTrip: ITrip,
-    loading: boolean
+    loading: boolean,
+    expenseReport: IExpenseReport
 }
 
 export const loadTrips = createAsyncThunk<
@@ -30,9 +32,8 @@ export const createTrip = createAsyncThunk<
 >(
     'trips/createTrip',
     async (trip: ITrip) => {
-        return await agent.Trips.create(trip).catch(error => {
-            console.log(error);
-        });
+        const result = await agent.Trips.create(trip);
+        return result;
     }
 );
 
@@ -62,12 +63,20 @@ export const addExpense = createAsyncThunk<IExpenseRes, IExpenseParams>(
     }
 )
 
+export const getExpenseReport = createAsyncThunk<IExpenseReport, number>(
+    'trips/getExpenseReport',
+    async (tripId: number) => {
+        return await agent.Trips.getExpenseReport(tripId);
+    }
+)
+
 const tripStore = createSlice({
     name: 'trips',
     initialState: {
         trips: [] as ITrip[],
         currentTrip: null! as ITrip,
         loading: true,
+        expenseReport: null! as IExpenseReport
     } as initialStateType,
     reducers: {},
     extraReducers:(builder) => {
@@ -88,12 +97,18 @@ const tripStore = createSlice({
             state.loading = false;
         })
         builder.addCase(addExpense.fulfilled, (state, action) => {
-            state.currentTrip.expenses?.push(action.payload);
+            // state.currentTrip.expenses?.push(action.payload);
+            state.loading = false;
+        })
+        builder.addCase(getExpenseReport.fulfilled, (state, action) => {
+            // state.currentTrip.expenses?.push(action.payload);
+            state.expenseReport = action.payload;
             state.loading = false;
         })
     }
 })
 
+export const currentExpenseReport = (state: RootState) => state.trips.expenseReport
 export const currentTrip = (state: RootState) => state.trips.currentTrip
 export const loadedTrips = (state: RootState) => state.trips.trips
 export default tripStore.reducer;

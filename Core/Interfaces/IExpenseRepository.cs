@@ -12,6 +12,7 @@ namespace Core.Interfaces
         Task<ExpenseDto> AddNewExpense(int tripId, string title, string spenderId, 
             List<string> sharedAmongAttendeesIds, decimal amount);
         Task<IReadOnlyList<ExpenseDto>> GetAllExpenses(int tripId);
+        Task<ExpenseReportDto> GenerateExpenseReport(int tripId);
         Task DeleteExpense(int ExpenseId);
     }
 }

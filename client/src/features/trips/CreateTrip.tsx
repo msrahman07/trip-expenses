@@ -3,15 +3,17 @@ import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import agent from '../../app/api/agent';
 import { ITrip } from '../../app/models/trip';
+import { useAppDispatch } from '../../app/stores/hooks';
 import { closeModal } from '../../app/stores/modalStore'
-import TripStore, { createTrip } from '../../app/stores/tripStore';
+import TripStore, { createTrip, loadTrips } from '../../app/stores/tripStore';
 
 const CreateTrip = () => {
-    const dispatch = useDispatch();
-    const store = TripStore;
+    const dispatch = useAppDispatch();
     
     const handleCreate = (values:ITrip) => {
-        dispatch<any>(createTrip(values));
+        dispatch(createTrip(values)).then(() => {
+            dispatch(loadTrips());
+        });
         dispatch(closeModal());
     }
     return (

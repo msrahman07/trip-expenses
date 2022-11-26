@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/stores/hooks';
 import { currentTrip, getCurrentTrip } from '../../../app/stores/tripStore';
 import AddAttendeeSection from './AddAttendeeSection';
 import AddExpenses from './AddExpenses';
+import GenerateExpenseReport from './GenerateExpenseReport';
 import ShowExpenses from './ShowExpenses';
 
 const TripDetails = () => {
@@ -68,6 +69,18 @@ const TripDetails = () => {
                 }}>
                 Show Expenses
               </button>
+              <button
+                onClick={() => setMenu('expensesReport')}
+                className={menu==='expensesReport' ? 'btn btn-primary' : 'btn btn-outline-primary'}
+                style={{
+                  minWidth: '80%',
+                  float: 'right',
+                  borderRadius: '5px',
+                  border: 'none',
+                  marginBottom: '10px'
+                }}>
+                Expense Report
+              </button>
             </div>
           </div>
           {menu === 'addAttendees' &&
@@ -83,6 +96,11 @@ const TripDetails = () => {
           {menu === 'showExpenses' &&
             <div>
               <ShowExpenses />
+            </div>
+          }
+          {menu === 'expensesReport' &&
+            <div>
+              <GenerateExpenseReport />
             </div>
           }
         </>

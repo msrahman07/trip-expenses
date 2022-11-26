@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 import { toast } from "react-toastify";
 import { IExpenseReq, IExpenseRes } from "../models/expense";
+import { IExpenseReport } from "../models/expenseReport";
 import { ITrip } from "../models/trip";
 import { IUser } from "../models/user";
 import { userToken } from "../stores/userStore";
@@ -63,6 +64,7 @@ const Trips = {
     delete: (id: number) => requests.delete<void>(`/trips/${id}`),
     addAttendees : (id: number, usersIds: string[]) => requests.post<ITrip>(`/trips/${id}/addAttendees`, usersIds),
     addExpense: (id: number, expense: IExpenseReq) => requests.post<IExpenseRes>(`/trips/${id}/addExpense`, expense),
+    getExpenseReport: (id: number) => requests.get<IExpenseReport>(`/trips/${id}/getExpenseReport`),
 };
 
 const Users = {
