@@ -71,7 +71,7 @@ namespace API.Controllers
         }
         
         [HttpGet("{id}/getExpenseReport")]
-        public async Task <ActionResult<ExpenseReportDto>> GetExpenseReport(int id)
+        public async Task <ActionResult<List<ExpenseReportDto>>> GetExpenseReport(int id)
         {
             var report = await expenseRepo.GenerateExpenseReport(id);
             return report != null ? report : BadRequest("Unable to generate report");

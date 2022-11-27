@@ -72,22 +72,23 @@ namespace Infrastructure.Data
             return;
         }
 
-        public async Task<ExpenseReportDto> GenerateExpenseReport(int tripId)
+        // public async Task<ExpenseReportDto> GenerateExpenseReport(int tripId)
+        public async Task<List<ExpenseReportDto>> GenerateExpenseReport(int tripId)
         {
             var expenses = await GetAllExpenses(tripId);
             if (expenses == null) return null!;
 
-            var expenseReport = new ExpenseReportDto();
+            var owingReport = new Dictionary<string, Dictionary<string, decimal>>();
             foreach (var expense in expenses)
             {
                 var owedTo = expense.Spender.Id!;
-                if (expenseReport.OwingReport.ContainsKey(owedTo))
+                if (owingReport.ContainsKey(owedTo))
                 {
                     foreach (var sharee in expense.SharedAmongAttendees)
                     {
-                        if (expenseReport.OwingReport[owedTo].ContainsKey(sharee.Id))
+                        if (owingReport[owedTo].ContainsKey(sharee.Id))
                         {
-                            expenseReport.OwingReport[owedTo][sharee.Id] += expense.SharedAmount;
+                            owingReport[owedTo][sharee.Id] += expense.SharedAmount;
                         }
                         else if (sharee.Id != owedTo)
                         {
@@ -95,22 +96,22 @@ namespace Infrastructure.Data
                             if (sharee.Id != owedTo)
                             {
                                 //new edit after working solution
-                                if (expenseReport.OwingReport.ContainsKey(sharee.Id) && expenseReport.OwingReport[sharee.Id].ContainsKey(owedTo))
+                                if (owingReport.ContainsKey(sharee.Id) && owingReport[sharee.Id].ContainsKey(owedTo))
                                 {
-                                    if (expenseReport.OwingReport[sharee.Id][owedTo] >= expense.SharedAmount)
+                                    if (owingReport[sharee.Id][owedTo] >= expense.SharedAmount)
                                     {
-                                        expenseReport.OwingReport[sharee.Id][owedTo] -= expense.SharedAmount;
+                                        owingReport[sharee.Id][owedTo] -= expense.SharedAmount;
                                     }
                                     else
                                     {
-                                        expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount - expenseReport.OwingReport[sharee.Id][owedTo]);
-                                        expenseReport.OwingReport[sharee.Id].Remove(owedTo);
+                                        owingReport[owedTo].Add(sharee.Id, expense.SharedAmount - owingReport[sharee.Id][owedTo]);
+                                        owingReport[sharee.Id].Remove(owedTo);
 
                                     }
                                 }
                                 else
                                 {
-                                    expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
+                                    owingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
                                 }
                             }
                         }
@@ -118,33 +119,59 @@ namespace Infrastructure.Data
                 }
                 else
                 {
-                    expenseReport.OwingReport.Add(owedTo, new Dictionary<string, decimal>());
+                    owingReport.Add(owedTo, new Dictionary<string, decimal>());
                     foreach (var sharee in expense.SharedAmongAttendees)
                     {
                         if (sharee.Id != owedTo)
                         {
                             //new edit after working solution
-                            if (expenseReport.OwingReport.ContainsKey(sharee.Id) && expenseReport.OwingReport[sharee.Id].ContainsKey(owedTo))
+                            if (owingReport.ContainsKey(sharee.Id) && owingReport[sharee.Id].ContainsKey(owedTo))
                             {
-                                if (expenseReport.OwingReport[sharee.Id][owedTo] >= expense.SharedAmount)
+                                if (owingReport[sharee.Id][owedTo] >= expense.SharedAmount)
                                 {
-                                    expenseReport.OwingReport[sharee.Id][owedTo] -= expense.SharedAmount;
+                                    owingReport[sharee.Id][owedTo] -= expense.SharedAmount;
                                 }
                                 else
                                 {
-                                    expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount - expenseReport.OwingReport[sharee.Id][owedTo]);
-                                    expenseReport.OwingReport[sharee.Id].Remove(owedTo);
+                                    owingReport[owedTo].Add(sharee.Id, expense.SharedAmount - owingReport[sharee.Id][owedTo]);
+                                    owingReport[sharee.Id].Remove(owedTo);
                                 }
                             }
                             else
                             {
-                                expenseReport.OwingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
+                                owingReport[owedTo].Add(sharee.Id, expense.SharedAmount);
                             }
                         }
                     }
                 }
             }
+            var expenseReport = ConvertDictionaryToList(owingReport);
+
             return expenseReport;
+        }
+
+        private List<ExpenseReportDto> ConvertDictionaryToList(Dictionary<string, Dictionary<string, decimal>> expenseReport)
+        {
+            var expenseReportList = new List<ExpenseReportDto>();
+            foreach(var (owedTo, sharees) in expenseReport)
+            {
+                var newItem = new ExpenseReportDto {
+                    OwedTo = owedTo, 
+                };
+                foreach(var (sharee, amount) in sharees)
+                {
+                    var newSharee = new ShareeDto
+                    {
+                        Sharee = sharee,
+                        Amount = amount
+                    };
+                    newItem.Sharees.Add(newSharee);
+                }
+                expenseReportList.Add(newItem);
+
+            }
+            return expenseReportList;
         }
     }
 }
+

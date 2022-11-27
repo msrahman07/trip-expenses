@@ -14,7 +14,7 @@ interface initialStateType {
     trips: ITrip[],
     currentTrip: ITrip,
     loading: boolean,
-    expenseReport: IExpenseReport
+    expenseReport: IExpenseReport[]
 }
 
 export const loadTrips = createAsyncThunk<
@@ -63,7 +63,7 @@ export const addExpense = createAsyncThunk<IExpenseRes, IExpenseParams>(
     }
 )
 
-export const getExpenseReport = createAsyncThunk<IExpenseReport, number>(
+export const getExpenseReport = createAsyncThunk<IExpenseReport[], number>(
     'trips/getExpenseReport',
     async (tripId: number) => {
         return await agent.Trips.getExpenseReport(tripId);
@@ -76,7 +76,7 @@ const tripStore = createSlice({
         trips: [] as ITrip[],
         currentTrip: null! as ITrip,
         loading: true,
-        expenseReport: null! as IExpenseReport
+        expenseReport: []
     } as initialStateType,
     reducers: {},
     extraReducers:(builder) => {

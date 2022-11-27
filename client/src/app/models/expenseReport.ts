@@ -1,15 +1,21 @@
 // public Dictionary<string, Dictionary<string, decimal>> 
 // OwingReport { get; set; }
 
-export interface IExpenseReport {
-    owingReport: Map<string, Map<string, number>>;
-}
-export interface IOwingReport {
-    
-    owedId: string;
-    sharees: {
-        shareeId: string;
-        amount: number;
-    }
+import { IAttendee } from "./attendee";
 
+// export interface IExpenseReport {
+//     owingReport: {
+//         [owedTo: string]: {
+//             [shareesId: string]: number
+//         };
+//     }
+// }
+interface Sharee {
+    sharee: string;
+    amount: number;
+}
+
+export interface IExpenseReport {
+    owedTo: string;
+    sharees: Sharee[];
 }
