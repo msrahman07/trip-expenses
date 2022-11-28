@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useNavigation } from 'react-router-dom';
-import agent from '../../app/api/agent';
+import { useNavigate } from 'react-router-dom';
 import { ITrip } from '../../app/models/trip';
 import { loadedTrips, loadTrips } from '../../app/stores/tripStore';
 
@@ -10,7 +9,9 @@ const Trips = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     useEffect(() => {
-        dispatch<any>(loadTrips());
+        return(() => {
+            dispatch<any>(loadTrips());
+        })
     }, [])
 
     return (

@@ -4,11 +4,11 @@ import { IExpenseReq, IExpenseRes } from "../models/expense";
 import { IExpenseReport } from "../models/expenseReport";
 import { ITrip } from "../models/trip";
 import { IUser } from "../models/user";
-import { userToken } from "../stores/userStore";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
+    const userToken = window.localStorage.getItem('token');
     if(userToken) {
         config.headers!.Authorization = `Bearer ${userToken}`;
     }
@@ -18,7 +18,7 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
 axios.interceptors.response.use(async (response) => {
     return response;
 }, (error: AxiosError) => {
-    const {data, status, config}:{data:any, status:any, config:any} = error.response!;
+    const {data, status}:{data:any, status:any} = error.response!;
     switch(status) {
         case 400:
             if(typeof data === 'string') {
@@ -61,10 +61,11 @@ const Trips = {
     list: () => requests.get<ITrip[]>('/trips'),
     details: (id: number) => requests.get<ITrip>(`/trips/${id}`),
     create: (trip: ITrip) => requests.post<ITrip>(`/trips`, trip),
-    delete: (id: number) => requests.delete<void>(`/trips/${id}`),
+    delete: (id: number) => requests.delete<{}>(`/trips/${id}`),
     addAttendees : (id: number, usersIds: string[]) => requests.post<ITrip>(`/trips/${id}/addAttendees`, usersIds),
     addExpense: (id: number, expense: IExpenseReq) => requests.post<IExpenseRes>(`/trips/${id}/addExpense`, expense),
     getExpenseReport: (id: number) => requests.get<IExpenseReport>(`/trips/${id}/getExpenseReport`),
+    deleteExpense: (id: number, expenseId:number) => requests.delete<{}>(`/trips/${id}/${expenseId}`),
 };
 
 const Users = {

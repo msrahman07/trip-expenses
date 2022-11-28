@@ -98,5 +98,4 @@ export const userStore = createSlice({
 export const currentUser = (state:RootState) => state.users.user;
 export const loadingUser = (state:RootState) => state.users.loading;
 export const allUsers = (state:RootState) => state.users.allUsers;
-export const userToken = window.localStorage.getItem('token');
 export default userStore.reducer;

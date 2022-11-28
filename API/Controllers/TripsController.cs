@@ -46,6 +46,8 @@ namespace API.Controllers
             var result = await tripRepo.CreateTrip(email, trip.Name, trip.Description);
             return (result != null) ? result : BadRequest("Unable to create trip");
         }
+
+        [Authorize]
         [HttpPost("{id}/addAttendees")]
         public async Task<ActionResult<TripDto>> AddAttendees(int id, List<string> usersIds)
         {
@@ -53,7 +55,7 @@ namespace API.Controllers
             return (result != null) ? result : BadRequest("Unable to save attendees");
 
         }
-
+        [Authorize]
         [HttpPost("{id}/addExpense")]
         public async Task<ActionResult<ExpenseDto>> AddNewExpense(int id, AddExpenseDto expense)
         {
@@ -77,11 +79,14 @@ namespace API.Controllers
             return report != null ? report : BadRequest("Unable to generate report");
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task DeleteTrip(int id)
         {
             await tripRepo.DeleteTrip(id);
         }
+
+        [Authorize]
         [HttpDelete("{id}/{expenseId}")]
         public async Task DeleteExpense(int expenseId)
         {

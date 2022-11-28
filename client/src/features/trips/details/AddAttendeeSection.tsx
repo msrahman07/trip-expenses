@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { IAttendee } from '../../../app/models/attendee';
-import { IUser } from '../../../app/models/user';
 import { useAppDispatch, useAppSelector } from '../../../app/stores/hooks'
 import { addAttendees, currentTrip } from '../../../app/stores/tripStore';
 import { allUsers, getAllUsers } from '../../../app/stores/userStore'
@@ -14,7 +13,9 @@ const AddAttendeeSection = ({ tripId }: { tripId: number }) => {
     const currentTripSelected = useAppSelector(currentTrip)
     const [selectedAttendeeId, setSelectedAttendeeId] = useState<IAttendee[]>(currentTripSelected.attendees ?? []);
     useEffect(() => {
-        dispatch(getAllUsers());
+        return(() => {
+            dispatch(getAllUsers());
+        })
     }, [])
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -43,17 +44,6 @@ const AddAttendeeSection = ({ tripId }: { tripId: number }) => {
                 <div className='col-sm-4'>
                     {allusers.values() &&
                         <CommonSelectionTemplate usersToSelect={Array.from(allusers.values())} handleChange={handleChange} />
-                        // <select
-                        //     className="form-select"
-                        //     size={3}
-                        //     aria-label="size 3 select"
-                        //     onChange={(e) => handleChange(e)}
-                        // // onSelect={(e) => console.log(e.target)}
-                        // >
-                        //     {Array.from(allusers.values()).map((user) => (
-                        //         <option key={user.id} value={user.id}>{user.displayName}</option>
-                        //     ))}
-                        // </select>
                     }
                 </div>
                 <div className='col-sm-8'>

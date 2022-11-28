@@ -2,20 +2,22 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { openModal } from '../stores/modalStore';
-import { useDispatch, useSelector } from 'react-redux';
 import LoginForm from '../../features/account/LoginForm';
 import SignupForm from '../../features/account/SignupForm';
 import CreateTrip from '../../features/trips/CreateTrip';
 import { currentUser, getCurrentUser, loadingUser, logoutUser } from '../stores/userStore';
 import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../stores/hooks';
 
 const NavBar = () => {
-    const dispatch = useDispatch();
-    const userLoading = useSelector(loadingUser);
-    const user = useSelector(currentUser);
+    const dispatch = useAppDispatch();
+    const userLoading = useAppSelector(loadingUser);
+    const user = useAppSelector(currentUser);
     
     useEffect(() => {
-        dispatch<any>(getCurrentUser());
+        return(() => {
+            dispatch(getCurrentUser());
+        })
     }, []);
 
     return (

@@ -10,9 +10,11 @@ const GenerateExpenseReport = () => {
     const expenseReport = useAppSelector(currentExpenseReport)
     const [attendeesMap, setAttendeesMap] = useState<Map<string, string>>()
     useEffect(() => {
-        dispatch(getExpenseReport(currentTripSelected.id!));
-        const attendees = new Map<string, string>(currentTripSelected.attendees?.map(att => {return [att.id, att.displayName]}))
-        setAttendeesMap(attendees);
+        return(() => {
+            dispatch(getExpenseReport(currentTripSelected.id!));
+            const attendees = new Map<string, string>(currentTripSelected.attendees?.map(att => {return [att.id, att.displayName]}))
+            setAttendeesMap(attendees);
+        });
     }, []);
     
 
@@ -26,7 +28,7 @@ const GenerateExpenseReport = () => {
                                 <hr />
                                 <div className='d-flex flex-column'>
                                     {expense.sharees && expense.sharees.map((sharee) => (
-                                        <span><strong>{attendeesMap.get(sharee.sharee)}</strong>: ${sharee.amount}</span>
+                                        <span key={sharee.sharee}><strong>{attendeesMap.get(sharee.sharee)}</strong>: ${sharee.amount}</span>
                                     ))}
                                 </div>
 

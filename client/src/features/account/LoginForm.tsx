@@ -13,7 +13,6 @@ const LoginForm = () => {
     useEffect(() => {
         if(!loading) {
             dispatch(closeModal());
-            console.log(loading)
         }
     }, [loading]);
 

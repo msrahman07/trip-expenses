@@ -14,7 +14,6 @@ const SignupForm = () => {
     useEffect(() => {
         if(!loading) {
             dispatch(closeModal());
-            console.log(loading)
         }
     }, [loading]);
     
